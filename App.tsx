@@ -16,8 +16,6 @@ const screenOptions: (props: { route: { name: keyof BottomTabParamList } }) => B
   route,
 }) => ({
   tabBarIcon: ({ focused, color, size }) => {
-    let iconName;
-
     if (route.name === "Recent") {
       return <Ionicons name={focused ? "hourglass-outline" : "hourglass"} size={size} color={color} />;
     } else if (route.name === "AllExpenses") {
