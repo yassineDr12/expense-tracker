@@ -3,7 +3,6 @@ import { TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from "re
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   Button,
-  Text,
   ButtonText,
   CloseIcon,
   Heading,
