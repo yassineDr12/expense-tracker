@@ -1,10 +1,15 @@
+import ExpenseItemComponent from "@/components/ExpenseItemComponent";
+import { useExpenses } from "@/contexts/ExpensesContext";
 import { AllExpensesScreenProps } from "@/navigation/types";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 const AllExpensesScreen: React.FC<AllExpensesScreenProps> = ({ route, navigation }) => {
+  const { expenses } = useExpenses();
+  const expense1 = expenses[0];
+
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>All Expenses</Text>
+      <ExpenseItemComponent expense={expense1} />
     </View>
   );
 };
