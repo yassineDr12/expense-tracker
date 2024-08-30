@@ -9,7 +9,7 @@ const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) 
           <Box>
             <Heading color="white">{expense.name}</Heading>
             <Text size="sm" color="#F1F1F1">
-              {expense.date.toLocaleDateString()}
+              {expense.date.toISOString().split("T")[0]}
             </Text>
           </Box>
           <Card width={104} alignItems="center">

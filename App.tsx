@@ -9,6 +9,7 @@ import RecentScreen from "./screens/RecentScreen";
 import AllExpensesScreen from "./screens/AllExpensesScreen";
 import { BottomTabParamList } from "./navigation/types";
 import { ExpensesContextProvider } from "./contexts/ExpensesContext";
+import AddExpenseButton from "./components/AddExpenseButton";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -33,7 +34,14 @@ export default function App() {
         {/* <Scractch /> */}
         <NavigationContainer>
           <Tab.Navigator screenOptions={screenOptions} initialRouteName="AllExpenses">
-            <Tab.Screen name="AllExpenses" options={{ title: "All Expenses" }} component={AllExpensesScreen} />
+            <Tab.Screen
+              name="AllExpenses"
+              options={{
+                title: "All Expenses",
+                headerRight: () => <AddExpenseButton />,
+              }}
+              component={AllExpensesScreen}
+            />
             <Tab.Screen name="Recent" component={RecentScreen} />
           </Tab.Navigator>
         </NavigationContainer>

@@ -16,9 +16,11 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [expenses, setExpenses] = useState<Expense[]>(data);
 
   const addExpense = (expenseToAdd: Expense) => {
-    setExpenses((prevExpenses) => [...prevExpenses, expenseToAdd]);
+    // get the id of the last element in the array, add one to it and use that as the new id
+    const newId = expenses.length > 0 ? Number(expenses[expenses.length - 1].id) + 1 : 1;
+    const newExpense: Expense = { ...expenseToAdd, id: newId.toString() };
+    setExpenses((prevExpenses) => [...prevExpenses, newExpense]);
   };
-
   const removeExpense = (expenseToRemove: Expense) => {
     setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense !== expenseToRemove));
   };

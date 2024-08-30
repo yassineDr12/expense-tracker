@@ -27,7 +27,7 @@ const AllExpensesScreen: React.FC<AllExpensesScreenProps> = ({ route, navigation
         </Card>
         <FlatList
           data={expenses}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => (item.id ? item.id : item.name)}
           renderItem={({ item }) => <ExpenseItemComponent expense={item} />}
           style={{ width: "100%" }}
         />
