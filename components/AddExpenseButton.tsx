@@ -43,7 +43,7 @@ const AddExpenseButton: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   const handleAddExpense = () => {
     if (name && amount && date) {

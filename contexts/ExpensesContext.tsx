@@ -16,6 +16,18 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [expenses, setExpenses] = useState<Expense[]>(data);
 
   const addExpense = (expenseToAdd: Expense) => {
+    // if expense already exists modify the existing one
+    const existingExpenseIndex = expenses.findIndex((expense) => expense.id === expenseToAdd.id);
+    if (existingExpenseIndex !== -1) {
+      const existingExpense = expenses[existingExpenseIndex];
+      const updatedExpense: Expense = { ...existingExpense, ...expenseToAdd };
+      setExpenses([
+        ...expenses.slice(0, existingExpenseIndex),
+        updatedExpense,
+        ...expenses.slice(existingExpenseIndex + 1),
+      ]);
+      return;
+    }
     // get the id of the last element in the array, add one to it and use that as the new id
     const newId = expenses.length > 0 ? Number(expenses[expenses.length - 1].id) + 1 : 1;
     const newExpense: Expense = { ...expenseToAdd, id: newId.toString() };
