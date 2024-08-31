@@ -44,7 +44,7 @@ const formatDate = (input: string): string => {
 };
 
 const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) => {
-  const { modifyExpense } = useExpenses();
+  const { modifyExpense, removeExpense } = useExpenses();
   const [showModal, setShowModal] = useState(false);
   const id = expense.id;
   const [name, setName] = useState(expense.name);
@@ -143,6 +143,9 @@ const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) 
               </Button>
               <Button size="sm" bg="#647AA1" borderWidth="$0" onPress={handleEditExpense}>
                 <ButtonText>Save</ButtonText>
+              </Button>
+              <Button action="negative" size="sm" ml="$3" onPress={() => removeExpense(expense)}>
+                <ButtonText>Delete</ButtonText>
               </Button>
             </ModalFooter>
           </ModalContent>
