@@ -44,7 +44,7 @@ const formatDate = (input: string): string => {
 };
 
 const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) => {
-  const { addExpense } = useExpenses();
+  const { modifyExpense } = useExpenses();
   const [showModal, setShowModal] = useState(false);
   const id = expense.id;
   const [name, setName] = useState(expense.name);
@@ -59,7 +59,7 @@ const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) 
         amount: parseFloat(amount),
         date: new Date(date),
       };
-      addExpense(newExpense);
+      modifyExpense(newExpense);
 
       setShowModal(false);
     } else {
