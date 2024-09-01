@@ -1,12 +1,17 @@
 import { Expense } from "@/types/data";
 import { createContext, FC, ReactNode, useContext, useEffect, useState } from "react";
-import { deleteExpense, fetchExpenses, storeExpense, updateExpense } from "@/util/http";
+import { deleteExpense, fetchExpenses, storeExpense, updateExpense } from "@/util/dataAPI";
 import { useCustomToast } from "@/hooks/useCustomToast";
+import { authenticateUser, createUser } from "@/util/authAPI";
 
 type ExpensesContextType =
   | {
       expenses: Expense[];
       isLoading: boolean;
+      isAuthenticated: boolean;
+      login: (email: string, password: string) => void;
+      signUp: (email: string, password: string) => void;
+      logout: () => void;
       addExpense: (expenseToAdd: Expense) => void;
       modifyExpense: (expenseToModify: Expense) => void;
       removeExpense: (expenseToRemove: Expense) => void;
@@ -16,9 +21,12 @@ type ExpensesContextType =
 const ExpensesContext = createContext<ExpensesContextType>(undefined);
 
 const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [userToken, setUserToken] = useState<string | undefined>(undefined);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { displayToast } = useCustomToast();
+
+  const isAuthenticated = userToken !== undefined;
 
   useEffect(() => {
     async function fetchData() {
@@ -34,6 +42,38 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     fetchData();
     setIsLoading(false);
   }, []);
+
+  const signUp = async (email: string, password: string) => {
+    setIsLoading(true);
+
+    try {
+      const token = await createUser(email, password);
+      setUserToken(token);
+    } catch (error) {
+      displayToast("Account creation failed, make sure you enter valid credentials", "error");
+    }
+
+    setIsLoading(false);
+  };
+
+  const login = async (email: string, password: string) => {
+    setIsLoading(true);
+
+    try {
+      const token = await authenticateUser(email, password);
+      setUserToken(token);
+      setIsLoading(false);
+      displayToast("Welcome!", "success");
+    } catch (error) {
+      displayToast("Login failed, make sure you enter valid credentials", "error");
+      setIsLoading(false);
+    }
+  };
+
+  const logout = () => {
+    setUserToken(undefined);
+    displayToast("Logged out", "success");
+  };
 
   const addExpense = async (expenseToAdd: Expense) => {
     setIsLoading(true);
@@ -81,9 +121,13 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         expenses,
         isLoading,
+        isAuthenticated,
         addExpense,
         modifyExpense,
         removeExpense,
+        login,
+        signUp,
+        logout,
       }}
     >
       {children}

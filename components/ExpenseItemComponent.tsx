@@ -75,7 +75,7 @@ const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) 
               </Text>
             </Box>
             <Card width={100} alignItems="flex-end">
-              <Text>{amount} $</Text>
+              <Text>{amount}</Text>
             </Card>
           </HStack>
         </Card>

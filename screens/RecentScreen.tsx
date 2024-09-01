@@ -1,6 +1,7 @@
+import AddExpenseButton from "@/components/AddExpenseButton";
 import ExpenseItemComponent from "@/components/ExpenseItemComponent";
 import { useExpenses } from "@/contexts/ExpensesContext";
-import { RecentScreenProps } from "@/navigation/types";
+import { HomeTabScreenProps } from "@/navigation/types";
 import { Expense } from "@/types/data";
 import {
   View,
@@ -14,8 +15,10 @@ import {
   MenuItemLabel,
   Spinner,
 } from "@gluestack-ui/themed";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FlatList } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { TouchableOpacity } from "react-native";
 
 // a filter type for the expenses date
 type FilterType = "Today" | "Yesterday" | "Last 7 Days" | "Last 30 Days" | "Last 60 Days";
@@ -51,8 +54,8 @@ const filterExpensesByDate = (expenses: Expense[], filter: FilterType): Expense[
   }
 };
 
-const RecentScreen: React.FC<RecentScreenProps> = ({ route, navigation }) => {
-  const { expenses, isLoading } = useExpenses();
+const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigation }) => {
+  const { expenses, isLoading, logout } = useExpenses();
   const [filter, setFilter] = useState<FilterType>("Today");
   const recentExpenses = useMemo(() => filterExpensesByDate(expenses, filter), [expenses, filter]);
   const totalExpenses = useMemo(() => {
@@ -62,6 +65,28 @@ const RecentScreen: React.FC<RecentScreenProps> = ({ route, navigation }) => {
   if (isLoading) {
     return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
   }
+  const logoutHandler = () => {
+    logout();
+    navigation.replace("Login");
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{
+            width: 48,
+            height: 48,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={logoutHandler}
+        >
+          <Ionicons name="log-out-outline" size={34} color="#647AA1" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   const ListEmptyComponent = () => {
     return (
@@ -105,7 +130,7 @@ const RecentScreen: React.FC<RecentScreenProps> = ({ route, navigation }) => {
           </Menu>
 
           <Text color="black" bold>
-            {totalExpenses} $
+            {totalExpenses}
           </Text>
         </HStack>
       </Card>
@@ -116,6 +141,7 @@ const RecentScreen: React.FC<RecentScreenProps> = ({ route, navigation }) => {
         style={{ width: "100%" }}
         ListEmptyComponent={ListEmptyComponent}
       />
+      <AddExpenseButton />
     </>
   );
 };

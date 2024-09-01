@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { StyleSheet, KeyboardAvoidingView, Platform, View } from "react-native";
 import {
   Button,
   ButtonText,
@@ -20,6 +19,9 @@ import {
   Input,
   InputField,
   FormControlLabelText,
+  Fab,
+  FabIcon,
+  AddIcon,
 } from "@gluestack-ui/themed";
 import { useExpenses } from "@/contexts/ExpensesContext";
 import { Expense } from "@/types/data";
@@ -70,9 +72,10 @@ const AddExpenseButton: React.FC = () => {
 
   return (
     <>
-      <TouchableOpacity style={styles.button} onPress={() => setShowModal(true)}>
-        <Ionicons name="add-circle" size={34} color="#647AA1" />
-      </TouchableOpacity>
+      {/* <TouchableOpacity style={styles.button} onPress={() => setShowModal(true)}> */}
+      {/* <Ionicons name="add-circle" size={34} color="#647AA1" /> */}
+
+      {/* </TouchableOpacity> */}
 
       <Modal
         isOpen={showModal}
@@ -150,6 +153,17 @@ const AddExpenseButton: React.FC = () => {
           </ModalContent>
         </KeyboardAvoidingView>
       </Modal>
+      <View
+        style={{
+          position: "absolute",
+          bottom: 0,
+          right: 0,
+        }}
+      >
+        <Fab bg="#647AA1" size="lg" onPress={() => setShowModal(true)}>
+          <FabIcon as={AddIcon} h="$4" w="$4" />
+        </Fab>
+      </View>
     </>
   );
 };

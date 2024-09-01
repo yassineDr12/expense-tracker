@@ -1,19 +1,23 @@
 import Scractch from "./Scratch";
+import "react-native-gesture-handler";
 import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { config } from "@gluestack-ui/config";
 import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import RecentScreen from "./screens/RecentScreen";
+import SignupScreen from "./screens/SignupScreen";
+import LoginScreen from "./screens/LoginScreen";
 import AllExpensesScreen from "./screens/AllExpensesScreen";
-import { BottomTabParamList } from "./navigation/types";
-import { ExpensesContextProvider } from "./contexts/ExpensesContext";
-import AddExpenseButton from "./components/AddExpenseButton";
+import { HomeTabParamList, RootStackParamList } from "./navigation/types";
+import { ExpensesContextProvider, useExpenses } from "./contexts/ExpensesContext";
 import { StatusBar } from "expo-status-bar";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const Tab = createBottomTabNavigator<BottomTabParamList>();
+const HomeTab = createBottomTabNavigator<HomeTabParamList>();
+const RootStack = createStackNavigator<RootStackParamList>();
 
-const screenOptions: (props: { route: { name: keyof BottomTabParamList } }) => BottomTabNavigationOptions = ({
+const tabScreensOptions: (props: { route: { name: keyof HomeTabParamList } }) => BottomTabNavigationOptions = ({
   route,
 }) => ({
   tabBarIcon: ({ focused, color, size }) => {
@@ -27,6 +31,23 @@ const screenOptions: (props: { route: { name: keyof BottomTabParamList } }) => B
   tabBarInactiveTintColor: "gray",
 });
 
+const Home = () => {
+  const { isAuthenticated } = useExpenses();
+  if (!isAuthenticated) return <></>;
+  return (
+    <HomeTab.Navigator screenOptions={tabScreensOptions} initialRouteName="AllExpenses">
+      <HomeTab.Screen
+        name="AllExpenses"
+        options={{
+          title: "All Expenses",
+        }}
+        component={AllExpensesScreen}
+      />
+      <HomeTab.Screen name="Recent" component={RecentScreen} />
+    </HomeTab.Navigator>
+  );
+};
+
 export default function App() {
   return (
     <GluestackUIProvider config={config}>
@@ -34,17 +55,23 @@ export default function App() {
         <StatusBar style="auto" />
         {/* <Scractch /> */}
         <NavigationContainer>
-          <Tab.Navigator screenOptions={screenOptions} initialRouteName="AllExpenses">
-            <Tab.Screen
-              name="AllExpenses"
+          <RootStack.Navigator initialRouteName="Login">
+            <RootStack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+            <RootStack.Screen
+              name="Login"
+              component={LoginScreen}
               options={{
-                title: "All Expenses",
-                headerRight: () => <AddExpenseButton />,
+                headerShown: false,
               }}
-              component={AllExpensesScreen}
             />
-            <Tab.Screen name="Recent" component={RecentScreen} />
-          </Tab.Navigator>
+            <RootStack.Screen
+              name="Signup"
+              component={SignupScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </RootStack.Navigator>
         </NavigationContainer>
       </ExpensesContextProvider>
     </GluestackUIProvider>
