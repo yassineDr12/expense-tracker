@@ -66,7 +66,7 @@ const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) 
   return (
     <>
       <Pressable onPress={() => setShowModal(true)}>
-        <Card bgColor="#647AA1" width="95%" p={10} m={3}>
+        <Card bgColor="#647AA1" m={5} p={10}>
           <HStack justifyContent="space-between" alignItems="center">
             <Box>
               <Heading color="white">{name}</Heading>
@@ -74,7 +74,7 @@ const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) 
                 {date}
               </Text>
             </Box>
-            <Card width={104} alignItems="center">
+            <Card width={100} alignItems="flex-end">
               <Text>{amount} $</Text>
             </Card>
           </HStack>

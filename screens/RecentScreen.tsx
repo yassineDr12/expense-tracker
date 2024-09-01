@@ -73,51 +73,49 @@ const RecentScreen: React.FC<RecentScreenProps> = ({ route, navigation }) => {
 
   return (
     <>
-      <View style={{ flex: 1, marginLeft: 13 }}>
-        <Card width="95%" p={10} m={3} mt={5}>
-          <HStack justifyContent="space-between" alignItems="center">
-            <Menu
-              placement="bottom"
-              offset={5}
-              marginLeft={25}
-              trigger={({ ...triggerProps }) => {
-                return (
-                  <Button {...triggerProps} bgColor="#647AA1">
-                    <ButtonText>{filter}</ButtonText>
-                  </Button>
-                );
-              }}
-            >
-              <MenuItem key="Today" textValue="Today" onPress={() => setFilter("Today")}>
-                <MenuItemLabel size="sm">Today</MenuItemLabel>
-              </MenuItem>
-              <MenuItem key="Yesterday" textValue="Yesterday" onPress={() => setFilter("Yesterday")}>
-                <MenuItemLabel size="sm">Yesterday</MenuItemLabel>
-              </MenuItem>
-              <MenuItem key="Last 7 Days" textValue="Last 7 Days" onPress={() => setFilter("Last 7 Days")}>
-                <MenuItemLabel size="sm">Last 7 Days</MenuItemLabel>
-              </MenuItem>
-              <MenuItem key="Last 30 Days" textValue="Last 30 Days" onPress={() => setFilter("Last 30 Days")}>
-                <MenuItemLabel size="sm">Last 30 Days</MenuItemLabel>
-              </MenuItem>
-              <MenuItem key="Last 60 Days" textValue="Last 60 Days" onPress={() => setFilter("Last 60 Days")}>
-                <MenuItemLabel size="sm">Last 60 Days</MenuItemLabel>
-              </MenuItem>
-            </Menu>
+      <Card p={10} m={5} mt={10}>
+        <HStack justifyContent="space-between" alignItems="center">
+          <Menu
+            placement="bottom"
+            offset={5}
+            marginLeft={25}
+            trigger={({ ...triggerProps }) => {
+              return (
+                <Button {...triggerProps} bgColor="#647AA1">
+                  <ButtonText>{filter}</ButtonText>
+                </Button>
+              );
+            }}
+          >
+            <MenuItem key="Today" textValue="Today" onPress={() => setFilter("Today")}>
+              <MenuItemLabel size="sm">Today</MenuItemLabel>
+            </MenuItem>
+            <MenuItem key="Yesterday" textValue="Yesterday" onPress={() => setFilter("Yesterday")}>
+              <MenuItemLabel size="sm">Yesterday</MenuItemLabel>
+            </MenuItem>
+            <MenuItem key="Last 7 Days" textValue="Last 7 Days" onPress={() => setFilter("Last 7 Days")}>
+              <MenuItemLabel size="sm">Last 7 Days</MenuItemLabel>
+            </MenuItem>
+            <MenuItem key="Last 30 Days" textValue="Last 30 Days" onPress={() => setFilter("Last 30 Days")}>
+              <MenuItemLabel size="sm">Last 30 Days</MenuItemLabel>
+            </MenuItem>
+            <MenuItem key="Last 60 Days" textValue="Last 60 Days" onPress={() => setFilter("Last 60 Days")}>
+              <MenuItemLabel size="sm">Last 60 Days</MenuItemLabel>
+            </MenuItem>
+          </Menu>
 
-            <Text color="black" bold>
-              {totalExpenses} $
-            </Text>
-          </HStack>
-        </Card>
-        <FlatList
-          data={recentExpenses}
-          keyExtractor={(item) => (item.id ? item.id : item.name)}
-          renderItem={({ item }) => <ExpenseItemComponent expense={item} />}
-          style={{ width: "100%" }}
-          ListEmptyComponent={ListEmptyComponent}
-        />
-      </View>
+          <Text color="black" bold>
+            {totalExpenses} $
+          </Text>
+        </HStack>
+      </Card>
+      <FlatList
+        data={recentExpenses}
+        keyExtractor={(item) => (item.id ? item.id : item.name)}
+        renderItem={({ item }) => <ExpenseItemComponent expense={item} />}
+        style={{ width: "100%" }}
+        ListEmptyComponent={ListEmptyComponent}
+      />
     </>
   );
 };

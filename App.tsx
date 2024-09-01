@@ -1,5 +1,5 @@
 import Scractch from "./Scratch";
-import { GluestackUIProvider, StatusBar } from "@gluestack-ui/themed";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { config } from "@gluestack-ui/config";
 import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import AllExpensesScreen from "./screens/AllExpensesScreen";
 import { BottomTabParamList } from "./navigation/types";
 import { ExpensesContextProvider } from "./contexts/ExpensesContext";
 import AddExpenseButton from "./components/AddExpenseButton";
+import { StatusBar } from "expo-status-bar";
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -30,7 +31,7 @@ export default function App() {
   return (
     <GluestackUIProvider config={config}>
       <ExpensesContextProvider>
-        <StatusBar />
+        <StatusBar style="auto" />
         {/* <Scractch /> */}
         <NavigationContainer>
           <Tab.Navigator screenOptions={screenOptions} initialRouteName="AllExpenses">
