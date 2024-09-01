@@ -65,7 +65,7 @@ const AddExpenseButton: React.FC = () => {
   const resetForm = () => {
     setName("");
     setAmount("");
-    setDate("");
+    setDate(new Date().toISOString().split("T")[0]);
   };
 
   return (

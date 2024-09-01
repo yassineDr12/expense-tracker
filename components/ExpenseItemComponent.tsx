@@ -1,13 +1,9 @@
 import {
   Button,
   ButtonText,
-  CloseIcon,
   Heading,
-  Icon,
   Modal,
-  ModalBackdrop,
   ModalBody,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,

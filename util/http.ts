@@ -34,6 +34,6 @@ export async function updateExpense(expense: Expense): Promise<void> {
   await axios.put(`${BACKEND_URL}/expenses/${expense.id}.json`, newData);
 }
 
-export function deleteExpense(id: string | undefined) {
+export async function deleteExpense(id: string | undefined) {
   axios.delete(`${BACKEND_URL}/expenses/${id}.json`);
 }

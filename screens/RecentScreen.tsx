@@ -2,9 +2,20 @@ import ExpenseItemComponent from "@/components/ExpenseItemComponent";
 import { useExpenses } from "@/contexts/ExpensesContext";
 import { RecentScreenProps } from "@/navigation/types";
 import { Expense } from "@/types/data";
-import { Text, Card, HStack, Menu, Button, ButtonText, MenuItem, MenuItemLabel } from "@gluestack-ui/themed";
+import {
+  View,
+  Text,
+  Card,
+  HStack,
+  Menu,
+  Button,
+  ButtonText,
+  MenuItem,
+  MenuItemLabel,
+  Spinner,
+} from "@gluestack-ui/themed";
 import React, { useMemo, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList } from "react-native";
 
 // a filter type for the expenses date
 type FilterType = "Today" | "Yesterday" | "Last 7 Days" | "Last 30 Days" | "Last 60 Days";
@@ -41,22 +52,30 @@ const filterExpensesByDate = (expenses: Expense[], filter: FilterType): Expense[
 };
 
 const RecentScreen: React.FC<RecentScreenProps> = ({ route, navigation }) => {
-  const { expenses } = useExpenses();
+  const { expenses, isLoading } = useExpenses();
   const [filter, setFilter] = useState<FilterType>("Today");
   const recentExpenses = useMemo(() => filterExpensesByDate(expenses, filter), [expenses, filter]);
   const totalExpenses = useMemo(() => {
     return recentExpenses.reduce((total, item) => total + item.amount, 0).toFixed(2);
   }, [recentExpenses]);
 
+  if (isLoading) {
+    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
+  }
+
+  const ListEmptyComponent = () => {
+    return (
+      <View sx={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 24, marginLeft: -13 }}>
+        <Text>No expenses for the selected filter</Text>
+      </View>
+    );
+  };
+
   return (
     <>
       <View style={{ flex: 1, marginLeft: 13 }}>
         <Card width="95%" p={10} m={3} mt={5}>
           <HStack justifyContent="space-between" alignItems="center">
-            {/* <Text color="black" size="sm">
-              {filter}
-            </Text> */}
-
             <Menu
               placement="bottom"
               offset={5}
@@ -96,6 +115,7 @@ const RecentScreen: React.FC<RecentScreenProps> = ({ route, navigation }) => {
           keyExtractor={(item) => (item.id ? item.id : item.name)}
           renderItem={({ item }) => <ExpenseItemComponent expense={item} />}
           style={{ width: "100%" }}
+          ListEmptyComponent={ListEmptyComponent}
         />
       </View>
     </>
