@@ -39,6 +39,9 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     if (isAuthenticated && !isAuthLoading) {
       loadExpenses();
     }
+    if (!isAuthenticated && expenses.length > 0) {
+      setExpenses([]);
+    }
   }, [isAuthenticated, isAuthLoading]);
 
   const addExpense = async (expenseToAdd: Expense) => {

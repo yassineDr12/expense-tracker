@@ -32,8 +32,11 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     if (expirationTime) {
       const timeUntilExpiry = expirationTime - Date.now();
-      if (timeUntilExpiry > 0) {
-        const refreshTimer = setTimeout(refreshAuthToken, timeUntilExpiry - 60000); // Refresh 1 minute before expiry
+
+      if (timeUntilExpiry <= 0) {
+        refreshAuthToken(); // Token has already expired, refresh immediately
+      } else {
+        const refreshTimer = setTimeout(refreshAuthToken, Math.max(timeUntilExpiry - 60000, 0)); // Refresh 1 minute before expiry
         return () => clearTimeout(refreshTimer);
       }
     }
@@ -48,6 +51,11 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setUserId(userId);
         setRefreshTokenValue(refreshToken);
         setExpirationTime(expirationTime);
+
+        // Early token expiry check
+        if (expirationTime <= Date.now()) {
+          await refreshAuthToken();
+        }
       }
     } catch (error) {
       console.error("Failed to load authentication state", error);
@@ -58,25 +66,37 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const storeAuth = async (token: string, id: string, refreshToken: string, expiresIn: string) => {
     const expirationTime = Date.now() + parseInt(expiresIn) * 1000;
     const authData = { userToken: token, userId: id, refreshToken, expirationTime };
+
     await AsyncStorage.setItem("auth", JSON.stringify(authData));
+
     setUserToken(token);
     setUserId(id);
     setRefreshTokenValue(refreshToken);
     setExpirationTime(expirationTime);
   };
 
-  const refreshAuthToken = async () => {
-    if (refreshTokenValue) {
-      try {
-        const { idToken, localId, expiresIn, refreshToken: newRefreshToken } = await refreshToken(refreshTokenValue);
-        await storeAuth(idToken, localId, newRefreshToken, expiresIn);
-      } catch (error) {
-        console.error("Failed to refresh token", error);
-        await logout();
+  const refreshAuthToken = async (retryCount = 0) => {
+    if (!refreshTokenValue) {
+      console.warn("No refresh token available");
+      await logout();
+      return;
+    }
+
+    try {
+      const { idToken, localId, expiresIn, refreshToken: newRefreshToken } = await refreshToken(refreshTokenValue);
+      await storeAuth(idToken, localId, newRefreshToken, expiresIn);
+    } catch (error: unknown) {
+      console.error("Failed to refresh token", error);
+
+      if (error instanceof Error && error.message.includes("network") && retryCount < 3) {
+        // Retry refresh token after 5 seconds, up to 3 times
+        setTimeout(() => refreshAuthToken(retryCount + 1), 5000);
+      } else {
+        await logout(); // Automatic logout on failure after retries
+        displayToast("Session expired, please log in again.", "error"); // Notify user
       }
     }
   };
-
   const signUp = async (email: string, password: string) => {
     setIsAuthLoading(true);
     try {
