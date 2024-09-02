@@ -7,17 +7,15 @@ import { useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { TouchableOpacity } from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
 
 const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route, navigation }) => {
-  const { expenses, isLoading, logout } = useExpenses();
+  const { expenses, isLoading } = useExpenses();
+  const { isAuthLoading, logout } = useAuth();
 
   const totalExpenses = useMemo(() => {
     return expenses.reduce((total, item) => total + item.amount, 0).toFixed(2);
   }, [expenses]);
-
-  if (isLoading) {
-    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
-  }
 
   const logoutHandler = () => {
     logout();
@@ -49,6 +47,10 @@ const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route,
       </View>
     );
   };
+
+  if (isLoading || isAuthLoading) {
+    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
+  }
 
   return (
     <>

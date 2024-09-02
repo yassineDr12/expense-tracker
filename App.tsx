@@ -10,9 +10,10 @@ import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
 import AllExpensesScreen from "./screens/AllExpensesScreen";
 import { HomeTabParamList, RootStackParamList } from "./navigation/types";
-import { ExpensesContextProvider, useExpenses } from "./contexts/ExpensesContext";
+import { ExpensesContextProvider } from "./contexts/ExpensesContext";
 import { StatusBar } from "expo-status-bar";
 import { createStackNavigator } from "@react-navigation/stack";
+import { AuthContextProvider, useAuth } from "./contexts/AuthContext";
 
 const HomeTab = createBottomTabNavigator<HomeTabParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -32,7 +33,7 @@ const tabScreensOptions: (props: { route: { name: keyof HomeTabParamList } }) =>
 });
 
 const Home = () => {
-  const { isAuthenticated } = useExpenses();
+  const { isAuthenticated } = useAuth();
   if (!isAuthenticated) return <></>;
   return (
     <HomeTab.Navigator screenOptions={tabScreensOptions} initialRouteName="AllExpenses">
@@ -51,29 +52,31 @@ const Home = () => {
 export default function App() {
   return (
     <GluestackUIProvider config={config}>
-      <ExpensesContextProvider>
-        <StatusBar style="auto" />
-        {/* <Scractch /> */}
-        <NavigationContainer>
-          <RootStack.Navigator initialRouteName="Login">
-            <RootStack.Screen name="Home" component={Home} options={{ headerShown: false }} />
-            <RootStack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <RootStack.Screen
-              name="Signup"
-              component={SignupScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </RootStack.Navigator>
-        </NavigationContainer>
-      </ExpensesContextProvider>
+      <AuthContextProvider>
+        <ExpensesContextProvider>
+          <StatusBar style="auto" />
+          {/* <Scractch /> */}
+          <NavigationContainer>
+            <RootStack.Navigator initialRouteName="Login">
+              <RootStack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+              <RootStack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <RootStack.Screen
+                name="Signup"
+                component={SignupScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </RootStack.Navigator>
+          </NavigationContainer>
+        </ExpensesContextProvider>
+      </AuthContextProvider>
     </GluestackUIProvider>
   );
 }

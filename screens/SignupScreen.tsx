@@ -1,4 +1,4 @@
-import { useExpenses } from "@/contexts/ExpensesContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useCustomToast } from "@/hooks/useCustomToast";
 import { RootStackScreenProps } from "@/navigation/types";
 import {
@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
 const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ route, navigation }) => {
-  const { signUp, isLoading, isAuthenticated } = useExpenses();
+  const { signUp, isAuthLoading, isAuthenticated } = useAuth();
   const { displayToast } = useCustomToast();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -33,10 +33,6 @@ const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ route, navigat
       navigation.replace("Home", { screen: "AllExpenses" });
     }
   }, [isAuthenticated, navigation]);
-
-  if (isLoading) {
-    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
-  }
 
   const handleShowPassword = () => {
     setShowPassword((showState) => !showState);
@@ -71,6 +67,14 @@ const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ route, navigat
       signUp(email, password);
     }
   };
+
+  if (isAuthLoading) {
+    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
+  }
+
+  if (isAuthenticated) {
+    return <></>;
+  }
 
   return (
     <KeyboardAvoidingView

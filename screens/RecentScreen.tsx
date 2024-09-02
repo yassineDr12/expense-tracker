@@ -19,6 +19,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { FlatList } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { TouchableOpacity } from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
 
 // a filter type for the expenses date
 type FilterType = "Today" | "Yesterday" | "Last 7 Days" | "Last 30 Days" | "Last 60 Days";
@@ -55,16 +56,14 @@ const filterExpensesByDate = (expenses: Expense[], filter: FilterType): Expense[
 };
 
 const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigation }) => {
-  const { expenses, isLoading, logout } = useExpenses();
+  const { expenses, isLoading } = useExpenses();
+  const { logout, isAuthLoading } = useAuth();
   const [filter, setFilter] = useState<FilterType>("Today");
   const recentExpenses = useMemo(() => filterExpensesByDate(expenses, filter), [expenses, filter]);
   const totalExpenses = useMemo(() => {
     return recentExpenses.reduce((total, item) => total + item.amount, 0).toFixed(2);
   }, [recentExpenses]);
 
-  if (isLoading) {
-    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
-  }
   const logoutHandler = () => {
     logout();
     navigation.replace("Login");
@@ -95,6 +94,10 @@ const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigatio
       </View>
     );
   };
+
+  if (isLoading || isAuthLoading) {
+    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
+  }
 
   return (
     <>

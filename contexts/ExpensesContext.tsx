@@ -2,16 +2,12 @@ import { Expense } from "@/types/data";
 import { createContext, FC, ReactNode, useContext, useEffect, useState } from "react";
 import { deleteExpense, fetchExpenses, storeExpense, updateExpense } from "@/util/dataAPI";
 import { useCustomToast } from "@/hooks/useCustomToast";
-import { authenticateUser, createUser } from "@/util/authAPI";
+import { useAuth } from "./AuthContext";
 
 type ExpensesContextType =
   | {
       expenses: Expense[];
       isLoading: boolean;
-      isAuthenticated: boolean;
-      login: (email: string, password: string) => void;
-      signUp: (email: string, password: string) => void;
-      logout: () => void;
       addExpense: (expenseToAdd: Expense) => void;
       modifyExpense: (expenseToModify: Expense) => void;
       removeExpense: (expenseToRemove: Expense) => void;
@@ -21,66 +17,36 @@ type ExpensesContextType =
 const ExpensesContext = createContext<ExpensesContextType>(undefined);
 
 const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [userToken, setUserToken] = useState<string | undefined>(undefined);
+  const { userToken, userId, isAuthLoading, isAuthenticated } = useAuth();
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { displayToast } = useCustomToast();
 
-  const isAuthenticated = userToken !== undefined;
+  const loadExpenses = async () => {
+    setIsLoading(true);
+    try {
+      const fetchedExpenses: Expense[] = await fetchExpenses(userToken, userId);
+      setExpenses(fetchedExpenses);
+      setIsLoading(false);
+    } catch (error) {
+      displayToast("Error loading expenses", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const expenses = await fetchExpenses();
-        setExpenses(expenses.reverse());
-      } catch (error) {
-        displayToast(String(error), "error");
-      }
+    if (isAuthenticated && !isAuthLoading) {
+      loadExpenses();
     }
-
-    setIsLoading(true);
-    fetchData();
-    setIsLoading(false);
-  }, []);
-
-  const signUp = async (email: string, password: string) => {
-    setIsLoading(true);
-
-    try {
-      const token = await createUser(email, password);
-      setUserToken(token);
-    } catch (error) {
-      displayToast("Account creation failed, make sure you enter valid credentials", "error");
-    }
-
-    setIsLoading(false);
-  };
-
-  const login = async (email: string, password: string) => {
-    setIsLoading(true);
-
-    try {
-      const token = await authenticateUser(email, password);
-      setUserToken(token);
-      setIsLoading(false);
-      displayToast("Welcome!", "success");
-    } catch (error) {
-      displayToast("Login failed, make sure you enter valid credentials", "error");
-      setIsLoading(false);
-    }
-  };
-
-  const logout = () => {
-    setUserToken(undefined);
-    displayToast("Logged out", "success");
-  };
+  }, [isAuthenticated, isAuthLoading]);
 
   const addExpense = async (expenseToAdd: Expense) => {
     setIsLoading(true);
     try {
-      const newExpense = await storeExpense(expenseToAdd);
+      const newExpense = await storeExpense(expenseToAdd, userToken, userId);
       setExpenses([newExpense, ...expenses]);
-      displayToast("Your new expense has been added!", "success");
+      displayToast(`${newExpense.name} expense added!`, "success");
     } catch (error) {
       displayToast(String(error), "error");
     }
@@ -91,8 +57,8 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setIsLoading(true);
 
     try {
-      await updateExpense(expenseToModify);
-      const updatedExpenses = await fetchExpenses();
+      await updateExpense(expenseToModify, userToken, userId);
+      const updatedExpenses = await fetchExpenses(userToken, userId);
       setExpenses(updatedExpenses);
       displayToast(`${expenseToModify.name} expense details updated!`, "success");
     } catch (error) {
@@ -107,7 +73,7 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
     try {
       setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense !== expenseToRemove));
-      await deleteExpense(expenseToRemove.id);
+      await deleteExpense(expenseToRemove.id, userToken, userId);
       displayToast(`${expenseToRemove.name} expense has been removed!`, "success");
     } catch (error) {
       displayToast(String(error), "error");
@@ -121,13 +87,9 @@ const ExpensesContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       value={{
         expenses,
         isLoading,
-        isAuthenticated,
         addExpense,
         modifyExpense,
         removeExpense,
-        login,
-        signUp,
-        logout,
       }}
     >
       {children}
