@@ -15,11 +15,9 @@ import {
   MenuItemLabel,
   Spinner,
 } from "@gluestack-ui/themed";
-import React, { useEffect, useMemo, useState } from "react";
-import { FlatList } from "react-native";
+import { useMemo, useState } from "react";
+import { FlatList, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { TouchableOpacity } from "react-native";
-import { useAuth } from "@/contexts/AuthContext";
 
 // a filter type for the expenses date
 type FilterType = "Today" | "Yesterday" | "Last 7 Days" | "Last 30 Days" | "Last 60 Days";
@@ -57,7 +55,6 @@ const filterExpensesByDate = (expenses: Expense[], filter: FilterType): Expense[
 
 const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigation }) => {
   const { expenses, isLoading } = useExpenses();
-  const { logout } = useAuth();
   const [filter, setFilter] = useState<FilterType>("Today");
   const recentExpenses = useMemo(() => filterExpensesByDate(expenses, filter), [expenses, filter]);
   const totalExpenses = useMemo(() => {
@@ -86,9 +83,23 @@ const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigatio
             marginLeft={25}
             trigger={({ ...triggerProps }) => {
               return (
-                <Button {...triggerProps} bgColor="#647AA1">
-                  <ButtonText>{filter}</ButtonText>
-                </Button>
+                <TouchableOpacity
+                  {...triggerProps}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    borderWidth: 0.8,
+                    borderColor: "#647AA1",
+                    borderRadius: 5,
+                    padding: 3,
+                    marginVertical: -2,
+                  }}
+                >
+                  <Ionicons name="calendar-outline" size={20} color="#647AA1" />
+                  <Text size="xs" style={{ marginHorizontal: 5 }}>
+                    {filter}
+                  </Text>
+                </TouchableOpacity>
               );
             }}
           >

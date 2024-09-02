@@ -47,14 +47,14 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const storedAuth = await AsyncStorage.getItem("auth");
       if (storedAuth) {
         const { userToken, userId, refreshToken, expirationTime } = JSON.parse(storedAuth);
-        setUserToken(userToken);
-        setUserId(userId);
-        setRefreshTokenValue(refreshToken);
-        setExpirationTime(expirationTime);
-
         // Early token expiry check
         if (expirationTime <= Date.now()) {
           await refreshAuthToken();
+        } else {
+          setUserToken(userToken);
+          setUserId(userId);
+          setRefreshTokenValue(refreshToken);
+          setExpirationTime(expirationTime);
         }
       }
     } catch (error) {
@@ -97,6 +97,7 @@ const AuthContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     }
   };
+
   const signUp = async (email: string, password: string) => {
     setIsAuthLoading(true);
     try {

@@ -32,12 +32,8 @@ const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route,
     <>
       <Card p={10} m={5} mt={10}>
         <HStack justifyContent="space-between" alignItems="center">
-          <Text color="black" size="sm">
-            Total
-          </Text>
-          <Text color="black" bold>
-            {totalExpenses}
-          </Text>
+          <Text size="sm">Total</Text>
+          <Text bold>{totalExpenses}</Text>
         </HStack>
       </Card>
       <FlatList

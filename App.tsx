@@ -1,6 +1,5 @@
-import Scractch from "./Scratch";
 import "react-native-gesture-handler";
-import { GluestackUIProvider, Spinner, Text } from "@gluestack-ui/themed";
+import { GluestackUIProvider, Spinner } from "@gluestack-ui/themed";
 import { config } from "@gluestack-ui/config";
 import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -78,7 +77,6 @@ export default function App() {
       <AuthContextProvider>
         <ExpensesContextProvider>
           <StatusBar style="auto" />
-          {/* <Scractch /> */}
           <AppContent />
         </ExpensesContextProvider>
       </AuthContextProvider>

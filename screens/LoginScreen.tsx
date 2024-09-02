@@ -14,9 +14,7 @@ import {
   InputField,
   InputIcon,
   InputSlot,
-  Spinner,
   VStack,
-  Text,
 } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
