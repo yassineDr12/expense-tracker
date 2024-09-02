@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
-const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ route, navigation }) => {
+const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ navigation }) => {
   const { signUp, isAuthenticated } = useAuth();
   const { displayToast } = useCustomToast();
   const [showPassword, setShowPassword] = useState(false);

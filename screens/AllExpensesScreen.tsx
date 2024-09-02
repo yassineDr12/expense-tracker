@@ -3,14 +3,12 @@ import ExpenseItemComponent from "@/components/ExpenseItemComponent";
 import { useExpenses } from "@/contexts/ExpensesContext";
 import { HomeTabScreenProps } from "@/navigation/types";
 import { View, Card, HStack, Spinner, Text } from "@gluestack-ui/themed";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { FlatList } from "react-native";
 import { useAuth } from "@/contexts/AuthContext";
-import LogoutButton from "@/components/LogoutButton";
 
-const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route, navigation }) => {
+const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = () => {
   const { expenses, isLoading } = useExpenses();
-  const { logout } = useAuth();
 
   const totalExpenses = useMemo(() => {
     return expenses.reduce((total, item) => total + item.amount, 0).toFixed(2);

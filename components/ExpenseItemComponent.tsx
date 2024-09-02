@@ -58,8 +58,6 @@ const ExpenseItemComponent: React.FC<ExpenseItemComponentProps> = ({ expense }) 
       modifyExpense(newExpense);
 
       setShowModal(false);
-    } else {
-      // show a toast message here
     }
   };
 

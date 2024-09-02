@@ -59,8 +59,6 @@ const AddExpenseButton: React.FC = () => {
 
       setShowModal(false);
       resetForm();
-    } else {
-      // show a toast message here
     }
   };
 
@@ -72,11 +70,6 @@ const AddExpenseButton: React.FC = () => {
 
   return (
     <>
-      {/* <TouchableOpacity style={styles.button} onPress={() => setShowModal(true)}> */}
-      {/* <Ionicons name="add-circle" size={34} color="#647AA1" /> */}
-
-      {/* </TouchableOpacity> */}
-
       <Modal
         isOpen={showModal}
         onClose={() => {

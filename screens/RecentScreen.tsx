@@ -3,18 +3,7 @@ import ExpenseItemComponent from "@/components/ExpenseItemComponent";
 import { useExpenses } from "@/contexts/ExpensesContext";
 import { HomeTabScreenProps } from "@/navigation/types";
 import { Expense } from "@/types/data";
-import {
-  View,
-  Text,
-  Card,
-  HStack,
-  Menu,
-  Button,
-  ButtonText,
-  MenuItem,
-  MenuItemLabel,
-  Spinner,
-} from "@gluestack-ui/themed";
+import { View, Text, Card, HStack, Menu, MenuItem, MenuItemLabel, Spinner } from "@gluestack-ui/themed";
 import { useMemo, useState } from "react";
 import { FlatList, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -24,36 +13,55 @@ type FilterType = "Today" | "Yesterday" | "Last 7 Days" | "Last 30 Days" | "Last
 
 // create a function to filter the expenses by date based on the selected filter type
 const filterExpensesByDate = (expenses: Expense[], filter: FilterType): Expense[] => {
+  const now = new Date();
+  const startOfDay = (date: Date) => new Date(date.setHours(0, 0, 0, 0));
+  const endOfDay = (date: Date) => new Date(date.setHours(23, 59, 59, 999));
+
   switch (filter) {
     case "Today":
-      return expenses.filter((expense) => new Date(expense.date).toDateString() === new Date().toDateString());
+      const todayStart = startOfDay(new Date(now));
+      const todayEnd = endOfDay(new Date(now));
+      return expenses.filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= todayStart && expenseDate <= todayEnd;
+      });
+
     case "Yesterday":
-      return expenses.filter(
-        (expense) =>
-          new Date(expense.date).toDateString() === new Date(new Date().getTime() - 24 * 60 * 60 * 1000).toDateString()
-      );
+      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      const yesterdayStart = startOfDay(yesterday);
+      const yesterdayEnd = endOfDay(yesterday);
+      return expenses.filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= yesterdayStart && expenseDate <= yesterdayEnd;
+      });
+
     case "Last 7 Days":
-      return expenses.filter(
-        (expense) =>
-          new Date(expense.date).toDateString() >=
-          new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toDateString()
-      );
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return expenses.filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= sevenDaysAgo && expenseDate <= now;
+      });
+
     case "Last 30 Days":
-      return expenses.filter(
-        (expense) =>
-          new Date(expense.date).toDateString() >=
-          new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000).toDateString()
-      );
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      return expenses.filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= thirtyDaysAgo && expenseDate <= now;
+      });
+
     case "Last 60 Days":
-      return expenses.filter(
-        (expense) =>
-          new Date(expense.date).toDateString() >=
-          new Date(new Date().getTime() - 60 * 24 * 60 * 60 * 1000).toDateString()
-      );
+      const sixtyDaysAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+      return expenses.filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        return expenseDate >= sixtyDaysAgo && expenseDate <= now;
+      });
+
+    default:
+      return expenses;
   }
 };
 
-const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigation }) => {
+const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = () => {
   const { expenses, isLoading } = useExpenses();
   const [filter, setFilter] = useState<FilterType>("Today");
   const recentExpenses = useMemo(() => filterExpensesByDate(expenses, filter), [expenses, filter]);
