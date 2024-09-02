@@ -14,8 +14,6 @@ import {
   InputField,
   InputIcon,
   InputSlot,
-  Spinner,
-  Text,
   VStack,
 } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
@@ -28,16 +26,6 @@ const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ route, navigat
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.replace("Home", { screen: "AllExpenses" });
-    }
-  }, [isAuthenticated, navigation]);
-
-  const handleShowPassword = () => {
-    setShowPassword((showState) => !showState);
-  };
 
   const validateInputs = () => {
     if (!email || !password || !confirmPassword) {
@@ -63,23 +51,21 @@ const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ route, navigat
     return true;
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation.replace("Home", { screen: "AllExpenses" });
+    }
+  }, [isAuthenticated, navigation]);
+
+  const handleShowPassword = () => {
+    setShowPassword((showState) => !showState);
+  };
+
   const handleSignUp = () => {
     if (validateInputs()) {
       signUp(email, password);
     }
   };
-
-  if (isAuthLoading) {
-    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
-  }
-
-  if (isAuthenticated) {
-    return (
-      <>
-        <Text>signup</Text>
-      </>
-    );
-  }
 
   return (
     <KeyboardAvoidingView

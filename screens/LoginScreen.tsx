@@ -22,23 +22,11 @@ import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 
 const LoginScreen: React.FC<RootStackScreenProps<"Login">> = ({ route, navigation }) => {
-  const { login, isAuthLoading, isAuthenticated } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const { displayToast } = useCustomToast();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigation.replace("Home", { screen: "AllExpenses" });
-    }
-  }, [isAuthenticated, navigation]);
-
-  const handleShowPassword = () => {
-    setShowPassword((showState) => {
-      return !showState;
-    });
-  };
 
   const validateInputs = () => {
     if (!email || !password) {
@@ -55,23 +43,23 @@ const LoginScreen: React.FC<RootStackScreenProps<"Login">> = ({ route, navigatio
     return true;
   };
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation.replace("Home", { screen: "AllExpenses" });
+    }
+  }, [isAuthenticated, navigation]);
+
+  const handleShowPassword = () => {
+    setShowPassword((showState) => {
+      return !showState;
+    });
+  };
+
   const handleLogin = () => {
     if (validateInputs()) {
       login(email, password);
     }
   };
-
-  if (isAuthLoading) {
-    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
-  }
-
-  if (isAuthenticated) {
-    return (
-      <>
-        <Text>login</Text>
-      </>
-    );
-  }
 
   return (
     <KeyboardAvoidingView

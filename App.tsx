@@ -1,6 +1,6 @@
 import Scractch from "./Scratch";
 import "react-native-gesture-handler";
-import { GluestackUIProvider, Text } from "@gluestack-ui/themed";
+import { GluestackUIProvider, Spinner, Text } from "@gluestack-ui/themed";
 import { config } from "@gluestack-ui/config";
 import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -14,6 +14,7 @@ import { ExpensesContextProvider } from "./contexts/ExpensesContext";
 import { StatusBar } from "expo-status-bar";
 import { createStackNavigator } from "@react-navigation/stack";
 import { AuthContextProvider, useAuth } from "./contexts/AuthContext";
+import LogoutButton from "./components/LogoutButton";
 
 const HomeTab = createBottomTabNavigator<HomeTabParamList>();
 const RootStack = createStackNavigator<RootStackParamList>();
@@ -21,6 +22,7 @@ const RootStack = createStackNavigator<RootStackParamList>();
 const tabScreensOptions: (props: { route: { name: keyof HomeTabParamList } }) => BottomTabNavigationOptions = ({
   route,
 }) => ({
+  headerRight: () => <LogoutButton />,
   tabBarIcon: ({ focused, color, size }) => {
     if (route.name === "Recent") {
       return <Ionicons name={focused ? "hourglass-outline" : "hourglass"} size={size} color={color} />;
@@ -47,6 +49,29 @@ const Home = () => {
   );
 };
 
+const AppContent = () => {
+  const { isAuthenticated, isAuthLoading } = useAuth();
+
+  if (isAuthLoading) {
+    return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
+  }
+
+  return (
+    <NavigationContainer>
+      <RootStack.Navigator>
+        {isAuthenticated ? (
+          <RootStack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+        ) : (
+          <>
+            <RootStack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <RootStack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false }} />
+          </>
+        )}
+      </RootStack.Navigator>
+    </NavigationContainer>
+  );
+};
+
 export default function App() {
   return (
     <GluestackUIProvider config={config}>
@@ -54,25 +79,7 @@ export default function App() {
         <ExpensesContextProvider>
           <StatusBar style="auto" />
           {/* <Scractch /> */}
-          <NavigationContainer>
-            <RootStack.Navigator initialRouteName="Login">
-              <RootStack.Screen name="Home" component={Home} options={{ headerShown: false }} />
-              <RootStack.Screen
-                name="Login"
-                component={LoginScreen}
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <RootStack.Screen
-                name="Signup"
-                component={SignupScreen}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </RootStack.Navigator>
-          </NavigationContainer>
+          <AppContent />
         </ExpensesContextProvider>
       </AuthContextProvider>
     </GluestackUIProvider>

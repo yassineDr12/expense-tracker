@@ -57,36 +57,12 @@ const filterExpensesByDate = (expenses: Expense[], filter: FilterType): Expense[
 
 const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigation }) => {
   const { expenses, isLoading } = useExpenses();
-  const { logout, isAuthenticated, isAuthLoading } = useAuth();
+  const { logout } = useAuth();
   const [filter, setFilter] = useState<FilterType>("Today");
   const recentExpenses = useMemo(() => filterExpensesByDate(expenses, filter), [expenses, filter]);
   const totalExpenses = useMemo(() => {
     return recentExpenses.reduce((total, item) => total + item.amount, 0).toFixed(2);
   }, [recentExpenses]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigation.navigate("Login");
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={{
-            width: 48,
-            height: 48,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={logout}
-        >
-          <Ionicons name="log-out-outline" size={34} color="#647AA1" />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
 
   const ListEmptyComponent = () => {
     return (
@@ -96,7 +72,7 @@ const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigatio
     );
   };
 
-  if (isLoading || isAuthLoading) {
+  if (isLoading) {
     return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
   }
 

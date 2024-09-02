@@ -5,41 +5,16 @@ import { HomeTabScreenProps } from "@/navigation/types";
 import { View, Card, HStack, Spinner, Text } from "@gluestack-ui/themed";
 import { useEffect, useMemo } from "react";
 import { FlatList } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { TouchableOpacity } from "react-native";
 import { useAuth } from "@/contexts/AuthContext";
+import LogoutButton from "@/components/LogoutButton";
 
 const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route, navigation }) => {
   const { expenses, isLoading } = useExpenses();
-  const { isAuthLoading, isAuthenticated, logout } = useAuth();
+  const { logout } = useAuth();
 
   const totalExpenses = useMemo(() => {
     return expenses.reduce((total, item) => total + item.amount, 0).toFixed(2);
   }, [expenses]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigation.navigate("Login");
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={{
-            width: 48,
-            height: 48,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={logout}
-        >
-          <Ionicons name="log-out-outline" size={34} color="#647AA1" />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
 
   const ListEmptyComponent = () => {
     return (
@@ -49,7 +24,7 @@ const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route,
     );
   };
 
-  if (isLoading || isAuthLoading) {
+  if (isLoading) {
     return <Spinner size="large" color="#647AA1" sx={{ flex: 1, justifyContent: "center", alignItems: "center" }} />;
   }
 
