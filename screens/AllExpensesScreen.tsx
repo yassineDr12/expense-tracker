@@ -11,16 +11,17 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route, navigation }) => {
   const { expenses, isLoading } = useExpenses();
-  const { isAuthLoading, logout } = useAuth();
+  const { isAuthLoading, isAuthenticated, logout } = useAuth();
 
   const totalExpenses = useMemo(() => {
     return expenses.reduce((total, item) => total + item.amount, 0).toFixed(2);
   }, [expenses]);
 
-  const logoutHandler = () => {
-    logout();
-    navigation.replace("Login");
-  };
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigation.navigate("Login");
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -32,7 +33,7 @@ const AllExpensesScreen: React.FC<HomeTabScreenProps<"AllExpenses">> = ({ route,
             justifyContent: "center",
             alignItems: "center",
           }}
-          onPress={logoutHandler}
+          onPress={logout}
         >
           <Ionicons name="log-out-outline" size={34} color="#647AA1" />
         </TouchableOpacity>

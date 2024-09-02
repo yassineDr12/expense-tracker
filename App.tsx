@@ -1,6 +1,6 @@
 import Scractch from "./Scratch";
 import "react-native-gesture-handler";
-import { GluestackUIProvider } from "@gluestack-ui/themed";
+import { GluestackUIProvider, Text } from "@gluestack-ui/themed";
 import { config } from "@gluestack-ui/config";
 import { BottomTabNavigationOptions, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
@@ -33,8 +33,6 @@ const tabScreensOptions: (props: { route: { name: keyof HomeTabParamList } }) =>
 });
 
 const Home = () => {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) return <></>;
   return (
     <HomeTab.Navigator screenOptions={tabScreensOptions} initialRouteName="AllExpenses">
       <HomeTab.Screen

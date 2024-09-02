@@ -16,6 +16,7 @@ import {
   InputSlot,
   Spinner,
   VStack,
+  Text,
 } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
@@ -65,7 +66,11 @@ const LoginScreen: React.FC<RootStackScreenProps<"Login">> = ({ route, navigatio
   }
 
   if (isAuthenticated) {
-    return <></>;
+    return (
+      <>
+        <Text>login</Text>
+      </>
+    );
   }
 
   return (

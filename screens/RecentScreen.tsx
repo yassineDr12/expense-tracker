@@ -57,17 +57,18 @@ const filterExpensesByDate = (expenses: Expense[], filter: FilterType): Expense[
 
 const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigation }) => {
   const { expenses, isLoading } = useExpenses();
-  const { logout, isAuthLoading } = useAuth();
+  const { logout, isAuthenticated, isAuthLoading } = useAuth();
   const [filter, setFilter] = useState<FilterType>("Today");
   const recentExpenses = useMemo(() => filterExpensesByDate(expenses, filter), [expenses, filter]);
   const totalExpenses = useMemo(() => {
     return recentExpenses.reduce((total, item) => total + item.amount, 0).toFixed(2);
   }, [recentExpenses]);
 
-  const logoutHandler = () => {
-    logout();
-    navigation.replace("Login");
-  };
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigation.navigate("Login");
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -79,7 +80,7 @@ const RecentScreen: React.FC<HomeTabScreenProps<"Recent">> = ({ route, navigatio
             justifyContent: "center",
             alignItems: "center",
           }}
-          onPress={logoutHandler}
+          onPress={logout}
         >
           <Ionicons name="log-out-outline" size={34} color="#647AA1" />
         </TouchableOpacity>

@@ -15,6 +15,7 @@ import {
   InputIcon,
   InputSlot,
   Spinner,
+  Text,
   VStack,
 } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
@@ -73,7 +74,11 @@ const SignupScreen: React.FC<RootStackScreenProps<"Signup">> = ({ route, navigat
   }
 
   if (isAuthenticated) {
-    return <></>;
+    return (
+      <>
+        <Text>signup</Text>
+      </>
+    );
   }
 
   return (
