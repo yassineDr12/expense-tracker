@@ -3,7 +3,6 @@ import { StyleSheet, KeyboardAvoidingView, Platform, View } from "react-native";
 import {
   Button,
   ButtonText,
-  CloseIcon,
   Heading,
   Icon,
   Modal,
@@ -84,9 +83,6 @@ const AddExpenseButton: React.FC = () => {
           <ModalContent>
             <ModalHeader>
               <Heading size="xl">Add New Expense</Heading>
-              <ModalCloseButton>
-                <Icon as={CloseIcon} />
-              </ModalCloseButton>
             </ModalHeader>
             <ModalBody>
               <VStack py="$2" space="xl">
